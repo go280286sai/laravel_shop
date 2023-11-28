@@ -32,28 +32,13 @@
 </button>
 
 @include('layouts.footer')
+@vite('resources/js/app.js')
 <script src="{{env('APP_URL')}}/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"
         integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
         crossorigin="anonymous"></script>
 <script src="{{env('APP_URL')}}/assets/js/main.js"></script>
 <script src="{{env('APP_URL')}}/assets/js/jquery.magnific-popup.min.js"></script>
-<script>
-    $(document).ready(function () {
-        update_cart("{{app()->getLocale()}}");
-        cart_reload();
-        favorite_reload()
-    });
-</script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/add_to_cart.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/cart_update.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/update_cart_modal.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/create_cart.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/cart_reload.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/favorite_reload.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/is_cart.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/cart_remove.js')}}"></script>
-<script src="{{\Illuminate\Support\Facades\Storage::url('/assets/js/favorite_add.js')}}"></script>
 @section('js')
 @show
 </body>

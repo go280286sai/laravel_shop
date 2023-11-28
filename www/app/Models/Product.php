@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,7 +40,12 @@ class Product extends Model
      */
     public static function add_to_cart(int $id, int $qty): string
     {
-        $is_product = Product::find($id);
+        $is_product = DB::table("products")
+            ->join("product_descriptions", "products.id", "=", "product_descriptions.product_id")
+            ->select("products.*", "product_descriptions.title")
+            ->where("product_descriptions.language_id", Language::getStatus()->id)
+            ->where('products.id', $id)
+            ->first();
         $amount = $is_product->amount;
         $amount < $qty ? $qty = $amount : $qty;
         if (Session::has('cart') && Session::get('cart') != []) {
@@ -75,11 +79,13 @@ class Product extends Model
     public static function removeCart(int $id): void
     {
         $products = Session::get('cart');
-        $filteredArray = array_filter($products, function ($item) use ($id) {
-            return $item['id'] !== $id;
-        });
-        $updatedArray = array_values($filteredArray);
-        Session::put('cart', $updatedArray);
+        foreach ($products as $key => $product) {
+            if ($product->id == $id) {
+                unset($products[$key]);
+                break;
+            }
+        }
+        Session::put('cart', $products);
     }
 
     /**
@@ -89,15 +95,17 @@ class Product extends Model
     {
         $products = Session::get('cart');
 
-        foreach ($products as $product) {
-            if ($product['id'] == $id) {
+        foreach ($products as $key => $product) {
+            if ($product->id == $id) {
                 $is_product = Product::find($id);
                 $amount = $is_product->amount;
                 $amount < $qty ? $qty = $amount : $qty;
-                $product['qty'] = $qty;
+                $product->qty = $qty;
+                $products[$key] = $product;
+                Session::put('cart', $products);
+                break;
             }
         }
-        Session::put('cart', $products);
     }
 
     /**
@@ -172,11 +180,6 @@ class Product extends Model
         $obj->save();
     }
 
-    /**
-     * @param array $data
-     * @param $id
-     * @return void
-     */
     public static function set_update(array $data, $id): void
     {
         $obj = self::find($id);
@@ -195,28 +198,20 @@ class Product extends Model
         $obj->save();
     }
 
-    /**
-     * @param array $data
-     * @return void
-     */
     public static function add(array $data): void
     {
-            $obj = new self();
-            $obj->category_id = $data['category'];
-            $obj->slug = Str::slug($data['title_1']);
-            $obj->price = $data['new_price'];
-            $obj->amount = $data['amount'];
-            $obj->img = $data['img'];
-            $obj->status = 1;
-            $obj->hit = 0;
-            $obj->save();
-            Product_description::set_update($data, $obj->id);
+        $obj = new self();
+        $obj->category_id = $data['category'];
+        $obj->slug = Str::slug($data['title_1']);
+        $obj->price = $data['new_price'];
+        $obj->amount = $data['amount'];
+        $obj->img = $data['img'];
+        $obj->status = 1;
+        $obj->hit = 0;
+        $obj->save();
+        Product_description::set_update($data, $obj->id);
     }
 
-    /**
-     * @param int $id
-     * @return void
-     */
     public static function remove(int $id): void
     {
         self::find($id)->delete();

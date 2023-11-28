@@ -11,7 +11,6 @@ use App\Models\Product;
 use App\Models\Product_description;
 use Illuminate\Contracts\View\View;
 
-
 class ProductController extends Controller
 {
     /**
@@ -19,15 +18,16 @@ class ProductController extends Controller
      *
      * @author Aleksander Storchak <go280286sai@gmail.com>
      */
-    public function view(string $slug): View
+    public function view(int $id): View
     {
-        $product = Product::where('id', $slug)->first();
+        $product = Product::where('id', $id)->first();
         if ($product == null) {
             abort(404);
         }
         $path = Product::get_path_product($product->id);
 
         return view('products.product', [
+            'id' => $id,
             'product' => $product,
             'lang' => Language::getStatus()->id,
             'path' => $path,
@@ -42,7 +42,7 @@ class ProductController extends Controller
     public function category(int $id): View
     {
         $category = Category_description::join('categories', 'categories.id', '=', 'category_descriptions.category_id')
-        ->where('category_descriptions.language_id', Language::getStatus()->id)->where('categories.id', $id)->first();
+            ->where('category_descriptions.language_id', Language::getStatus()->id)->where('categories.id', $id)->first();
         $main = Main_description::where('language_id', Language::getStatus()->id)
             ->where('main_id', $category->main_id)
             ->first();
@@ -55,6 +55,7 @@ class ProductController extends Controller
         return view('products.category', [
             'category' => $category,
             'main' => $main,
+            'id' => $id,
             'products' => $products,
         ]);
     }

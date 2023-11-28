@@ -4,9 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Main;
 use App\Models\Main_description;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Request;
 use Tests\TestCase;
 
 class MainCategoryTest extends TestCase

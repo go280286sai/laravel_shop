@@ -4,11 +4,6 @@ namespace app\tests\Feature;
 
 use App\Models\Category;
 use App\Models\Category_description;
-use App\Models\Main;
-use App\Models\Main_description;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Request;
 use Tests\TestCase;
 
 class CategoriesTest extends TestCase
@@ -83,7 +78,7 @@ class CategoriesTest extends TestCase
      */
     public function test_remove_main($id): void
     {
-       Category::remove($id);
+        Category::remove($id);
         $this->assertDatabaseMissing('category_descriptions', ['title' => 'title_1_1', 'description' => 'description_1_1',
             'keywords' => 'keywords_1_1', 'content' => 'content_1_1']);
         $this->assertDatabaseMissing('category_descriptions', ['title' => 'title_2_1', 'description' => 'description_2_1',

@@ -3,17 +3,17 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MainCategoryController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\MainController;
 use App\Http\Controllers\OpensslController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\IsAdminMiddleware;
 use App\Http\Middleware\IsAuthMiddleware;
-use App\Http\Middleware\StatusMiddleware;
 use go280286sai\laravel_openssl\Log\LogMessage;
 use go280286sai\laravel_openssl\Models\Ssl_search;
 use Illuminate\Foundation\Application;
@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', [MainController::class, 'index'])->name('home');
 //---------------------------------------------------------------------------
 //Cart controller
 Route::controller(CartController::class)->group(function () {
@@ -46,8 +47,7 @@ Route::controller(CartController::class)->group(function () {
 });
 //----------------------------------------------------------------------------
 //Main controller
-Route::controller(\App\Http\Controllers\MainController::class)->group(function () {
-    Route::get('/', 'index')->name('home');
+Route::controller(MainController::class)->group(function () {
     Route::post('/main/search', 'search')->name('search');
 });
 //----------------------------------------------------------------------------
@@ -61,8 +61,8 @@ Route::controller(ProductController::class)->group(function () {
 //WishlistController
 Route::controller(WishlistController::class)->group(function () {
     Route::get('/wishlist', 'index')->name('wishlist');
-    Route::get('/wishlist/get', 'get')->name('wishlist.get');
-    Route::get('/wishlist/add', 'add')->name('wishlist.add');
+//    Route::get('/wishlist/get', 'get')->name('wishlist.get');
+//    Route::get('/wishlist/add', 'add')->name('wishlist.add');
     Route::get('/wishlist/remove', 'remove')->name('wishlist.remove');
 });
 //---------------------------------------------------------------------------
@@ -92,13 +92,14 @@ Route::get('/lang/{lang}', function ($lang) {
 });
 //------------------------------------------------------------------
 //Get count in cart
-Route::get('/cart_reload', function () {
-    if (\Illuminate\Support\Facades\Session::has('cart')) {
-        return count(\Illuminate\Support\Facades\Session::get('cart'));
-    }
-
-    return 0;
-});
+//Route::get('/cart_reload', function () {
+//    if (\Illuminate\Support\Facades\Session::has('cart')) {
+//        return count(\Illuminate\Support\Facades\Session::get('cart'));
+//    }
+//
+//    return 0;
+//});
+Route::get('/test', [\App\Http\Controllers\TestController::class, 'index']);
 //------------------------------------------------------------------
 Route::prefix('admin')->middleware([IsAuthMiddleware::class, IsAdminMiddleware::class])->group(function () {
 
@@ -123,26 +124,4 @@ Route::prefix('admin')->middleware([IsAuthMiddleware::class, IsAdminMiddleware::
         Route::post('/user/send_email', [UserController::class, 'send_email'])->name('profile.send_email');
     });
 //------------------------------------------------------------------
-Route::get('/test', function () {
-    $id = 3;
-    $text = "Hello flask";
-    $url = Ssl_search::find($id)->url;
-    $key = Ssl_search::get_public_key($id . Ssl_search::$toSave);
-    $send = Ssl_search::encrypt($text, $key);
-    $name = Ssl_search::$ssl_public_key;
-    try {
-        $result = Http::post($url, ['name'=>$name, 'text'=>$send]);
-        if ($result->status() != 200) {
-            throw new \Exception('Not connection');
-        }
-        return "OK";
-    }
-    catch (\Throwable $th) {
-        LogMessage::send('error: '. $th->getMessage());
-        return "Error";
-    }
-
-
-
-});
 require __DIR__.'/auth.php';

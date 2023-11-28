@@ -40,7 +40,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             LangMiddleware::class,
-//            StatusMiddleware::class,
+            //            StatusMiddleware::class,
         ],
 
         'api' => [
