@@ -30,20 +30,10 @@
                             @else
                                 <li><i class="fas fa-shipping-fast text-muted"></i>&nbsp;{{__('messages.to_wait')}}</li>
                             @endif
-                            <li> <a href="/wishlist/add?id={{$product->id}}"><i
-                                        class="far fa-heart add_to_favorite"
-                                        data-id="{{$product->id}}"
-                                        title="{{__('messages.to_favorite')}}"></i></a>&nbsp;{{__('messages.to_favorite')}}</li>
                             <li><i class="fas fa-hand-holding-usd"></i> <span
                                     class="product-price"><small>{{$product->old_price}}</small>{{$product->price}}</li>
                         </ul>
-                        <div id="product">
-                            <div class="input-group mb-3">
-                                <input id="input-quantity" type="number" class="form-control" name="quantity" value="1">
-                                <button class="btn btn-danger add-to-cart" type="button"
-                                        data-id="{{$product->id}}">{{__('messages.to_buy')}}</button>
-                            </div>
-                        </div>
+                       <livewire:product-model :id="$product->id" />
             </div>
             <div class="col-md-8 order-md-1">
                 <ul class="thumbnails list-unstyled clearfix">

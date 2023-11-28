@@ -5,11 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\User_comment;
 use App\Models\User_description;
-use App\Notifications\SendEmailUserNotification;
 use Database\Factories\UserFactory;
-use Faker\Factory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UsersTest extends TestCase
@@ -19,16 +15,16 @@ class UsersTest extends TestCase
      */
     public function test_user_add(): string
     {
-       $user = UserFactory::new()->create();
-       $this->assertDatabaseHas('users', ['name' => $user->name]);
-       $user_description = new User_description();
-       $user_description->user_id = $user->id;
-       $user_description->last_name = fake()->lastName();
-       $user_description->gender_id = 1;
-       $user_description->save();
-       $this->assertDatabaseHas('user_descriptions', ['user_id' => $user->id]);
+        $user = UserFactory::new()->create();
+        $this->assertDatabaseHas('users', ['name' => $user->name]);
+        $user_description = new User_description();
+        $user_description->user_id = $user->id;
+        $user_description->last_name = fake()->lastName();
+        $user_description->gender_id = 1;
+        $user_description->save();
+        $this->assertDatabaseHas('user_descriptions', ['user_id' => $user->id]);
 
-       return $user->id;
+        return $user->id;
     }
 
     /**
@@ -57,7 +53,7 @@ class UsersTest extends TestCase
         $this->assertDatabaseHas('users', ['status' => 1]);
 
         return $id;
-      }
+    }
 
     /**
      * @depends test_block
@@ -73,5 +69,5 @@ class UsersTest extends TestCase
         $this->assertDatabaseHas('users', ['id' => $id, 'deleted_at' => now()]);
         User::soft_remove($id);
         $this->assertDatabaseMissing('users', ['id' => $id]);
-      }
+    }
 }

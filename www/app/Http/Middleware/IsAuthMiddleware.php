@@ -18,6 +18,7 @@ class IsAuthMiddleware
         if (! auth()->check()) {
             return redirect()->route('login');
         }
+
         return $next($request);
     }
 }

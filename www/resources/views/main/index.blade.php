@@ -26,15 +26,7 @@
                                                 <small>{{$product->old_price>0?$product->old_price:''}}</small>{{$product->price}}
                                             </div>
                                             <input type="hidden" id="input-quantity" value="1">
-                                            <div class="product-links">
-                                                <a href="/cart/add?id={{$product->id}}&qty=1" class="add-to-cart"
-                                                   data-id="{{$product->id}}"><i class="fas fa-shopping-cart"
-                                                                                 title="{{__('messages.add_to_cart')}}"></i></a>
-                                                <a href="/wishlist/add?id={{$product->id}}"><i
-                                                        class="add_to_favorite far fa-heart "
-                                                        data-id="{{$product->id}}"
-                                                        title="{{__('messages.to_favorite')}}"></i></a>
-                                            </div>
+                                              <livewire:main  :product_id="$product->id"/>
                                         </div>
                                     </div>
                                 @endif
@@ -79,5 +71,4 @@
         </div>
     </section>
 @endsection
-@section('js')
-@endsection
+

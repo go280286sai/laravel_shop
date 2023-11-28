@@ -40,7 +40,7 @@ class Category extends Model
         $arr = [];
         $arr['main_id'] = $obj->main_id;
         foreach ($obj->category_descriptions as $item) {
-            if($item->language_id == Language::getStatus()->id){
+            if ($item->language_id == Language::getStatus()->id) {
                 $arr['title_category'] = $item->title;
             }
         }
@@ -48,10 +48,6 @@ class Category extends Model
         return $arr;
     }
 
-    /**
-     * @param int $id
-     * @return void
-     */
     public static function remove(int $id): void
     {
         self::find($id)->delete();

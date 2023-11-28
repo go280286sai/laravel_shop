@@ -2,15 +2,8 @@
 
 namespace app\tests\Feature;
 
-use App\Models\Category;
-use App\Models\Category_description;
-use App\Models\Main;
-use App\Models\Main_description;
 use App\Models\Product;
 use App\Models\Product_description;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Request;
 use Tests\TestCase;
 
 class ProductsTest extends TestCase
@@ -49,7 +42,6 @@ class ProductsTest extends TestCase
             'exerpt' => 'exerpt_2', 'keywords' => 'keywords_2', 'description' => 'description_2']);
         $this->assertDatabaseHas('product_descriptions', ['title' => 'title_3', 'content' => 'content_3',
             'exerpt' => 'exerpt_3', 'keywords' => 'keywords_3', 'description' => 'description_3']);
-
 
         $id = Product_description::where('title', 'title_1')->first('product_id');
 

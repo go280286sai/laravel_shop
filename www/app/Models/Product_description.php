@@ -11,45 +11,30 @@ class Product_description extends Model
 {
     use HasFactory, JsonModel;
 
-    /**
-     * @var array
-     */
     private static array $select_fields = ['title', 'product_id', 'language_id', 'content'];
 
-    /**
-     * @return BelongsTo
-     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }
 
-    /**
-     * @param array $data
-     * @param int $id
-     * @return void
-     */
     public static function set_update(array $data, int $id): void
     {
-        $is_set =count(self::where('product_id', $id)->get())>0;
+        $is_set = count(self::where('product_id', $id)->get()) > 0;
         for ($i = 1; $i <= 3; $i++) {
-        if ($is_set){
-            $obj = self::all()
-                ->where('product_id', $id)
-                ->where('language_id', $i)
-                ->first();
-        }
-            else{
-                 $obj = new self();
-                 $obj->product_id = $id;
+            if ($is_set) {
+                $obj = self::all()
+                    ->where('product_id', $id)
+                    ->where('language_id', $i)
+                    ->first();
+            } else {
+                $obj = new self();
+                $obj->product_id = $id;
             }
             $obj->language_id = $i;
             $obj->title = $data['title_'.$i];

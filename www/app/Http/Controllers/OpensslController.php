@@ -29,17 +29,15 @@ class OpensslController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string',
             'key' => 'required|string',
             'url' => 'required|string',
         ]);
-        Ssl_search::add_resource(['name' => $request->name, 'key' => $request->key, 'url' => $request->url]);
+        Ssl_search::add_resource(['name' => $validated['name'], 'key' => $validated['key'], 'url' => $validated['url']]);
 
         return redirect()->back();
     }
-
-
 
     /**
      * Display the specified resource.
@@ -55,19 +53,22 @@ class OpensslController extends Controller
     public function edit(int $id): View
     {
         $resource = Ssl_search::find($id);
-        $publicKey = Ssl_search::get_public_key($id . Ssl_search::$toSave);
+        $publicKey = Ssl_search::get_public_key($id.Ssl_search::$toSave);
 
         return view('vendor.openssl.update_resource', ['resource' => $resource, 'publicKey' => $publicKey]);
     }
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string',
             'key' => 'required|string',
             'url' => 'required|string',
         ]);
-        Ssl_search::update_resource(['name' => $request->name, 'key' => $request->key, 'url' => $request->url], $id);
+        Ssl_search::update_resource(
+            [
+                'name' => $validated['name'], 'key' => $validated['key'], 'url' => $validated['url'],
+            ], $id);
 
         return redirect()->back();
     }

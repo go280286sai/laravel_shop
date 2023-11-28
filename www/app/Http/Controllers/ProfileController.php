@@ -14,44 +14,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
-
 class ProfileController extends Controller
 {
-    /**
-     * @return View
-     */
     public function index(): View
     {
         return view('client.pages.dashboard');
     }
 
-    /**
-     * @return View
-     */
     public function orders(): View
     {
         return view('client.pages.orders');
     }
 
-    /**
-     * @return View
-     */
     public function history(): View
     {
         return view('client.pages.history');
     }
 
-    /**
-     * @return View
-     */
     public function messages(): View
     {
         return view('client.pages.messages');
     }
 
-    /**
-     * @return View
-     */
     public function profile(): View
     {
         $user = User::find(Auth::user()->getAuthIdentifier());
@@ -73,19 +57,13 @@ class ProfileController extends Controller
             ]);
     }
 
-    /**
-     * @return View
-     */
     public function feedback(): View
     {
         $user = Auth::user()->email;
+
         return view('client.user.feedback', ['client' => $user]);
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function send_feedback(Request $request): RedirectResponse
     {
         $request->validate([
@@ -94,6 +72,7 @@ class ProfileController extends Controller
         ]);
         $admin = User::where('email', env('MAIL_FROM_ADDRESS'))->first();
         $admin->notify(new FeedbackNotification($request->client, $request->message));
+
         return Redirect::back();
     }
 

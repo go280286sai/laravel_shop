@@ -14,6 +14,7 @@ class OrderController extends Controller
     public function index(): View
     {
         $orders = Order::where('user_id', auth()->user()->id)->get();
+
         return view('client.user.orders.index', ['orders' => $orders]);
     }
 
@@ -25,12 +26,13 @@ class OrderController extends Controller
             ->where('language_id', Language::getStatus()->id)
             ->first();
         $products = Order_product::where('order_id', $id)->get();
+
         return view('client.user.orders.view',
             [
                 'order' => $order,
                 'client' => $client,
                 'service' => $service,
-                'products' => $products
+                'products' => $products,
             ]);
     }
 }
