@@ -14,10 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\IsAdminMiddleware;
 use App\Http\Middleware\IsAuthMiddleware;
-use go280286sai\laravel_openssl\Log\LogMessage;
-use go280286sai\laravel_openssl\Models\Ssl_search;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,11 +31,6 @@ Route::get('/', [MainController::class, 'index'])->name('home');
 //---------------------------------------------------------------------------
 //Cart controller
 Route::controller(CartController::class)->group(function () {
-    Route::get('/cart/get', 'getAll')->name('cart.get');
-    Route::get('/cart/remove', 'remove')->name('cart.remove');
-    Route::get('/cart/update', 'update')->name('cart.update');
-    Route::get('/cart/add', 'add')->name('cart.add');
-    Route::get('/cart/clear', 'clear')->name('cart.clear');
     Route::get('/cart/store', 'store')->name('cart.store');
     Route::post('/cart/create', 'create')->name('cart.create');
     Route::get('/cart/delivery', 'delivery')->name('cart.delivery');
@@ -61,8 +53,8 @@ Route::controller(ProductController::class)->group(function () {
 //WishlistController
 Route::controller(WishlistController::class)->group(function () {
     Route::get('/wishlist', 'index')->name('wishlist');
-//    Route::get('/wishlist/get', 'get')->name('wishlist.get');
-//    Route::get('/wishlist/add', 'add')->name('wishlist.add');
+    //    Route::get('/wishlist/get', 'get')->name('wishlist.get');
+    //    Route::get('/wishlist/add', 'add')->name('wishlist.add');
     Route::get('/wishlist/remove', 'remove')->name('wishlist.remove');
 });
 //---------------------------------------------------------------------------
@@ -91,14 +83,6 @@ Route::get('/lang/{lang}', function ($lang) {
     return redirect()->back();
 });
 //------------------------------------------------------------------
-//Get count in cart
-//Route::get('/cart_reload', function () {
-//    if (\Illuminate\Support\Facades\Session::has('cart')) {
-//        return count(\Illuminate\Support\Facades\Session::get('cart'));
-//    }
-//
-//    return 0;
-//});
 Route::get('/test', [\App\Http\Controllers\TestController::class, 'index']);
 //------------------------------------------------------------------
 Route::prefix('admin')->middleware([IsAuthMiddleware::class, IsAdminMiddleware::class])->group(function () {

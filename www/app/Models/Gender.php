@@ -10,11 +10,17 @@ class Gender extends Model
 {
     use HasFactory;
 
+    /**
+     * @return HasMany
+     */
     public function gender_descriptions(): HasMany
     {
         return $this->hasMany(Gender_description::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function user_descriptions(): HasMany
     {
         return $this->hasMany(User_description::class);

@@ -12,11 +12,17 @@ class Main extends Model
 {
     use HasFactory;
 
+    /**
+     * @return HasMany
+     */
     public function main_descriptions(): HasMany
     {
         return $this->hasMany(Main_description::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function categories(): HasMany
     {
         return $this->hasMany(Category::class);
@@ -31,34 +37,27 @@ class Main extends Model
     {
         if (Cache::has('list')) {
             return Cache::get('list');
-        } else {
-            $list = self::all();
-            Cache::put('list', $list);
         }
+        $list = self::all();
+        Cache::put('list', $list);
+
 
         return $list;
     }
 
     /**
-     * @author Aleksander Storchak <go280286sai@gmail.com>
+     * @param int $id
+     * @return void
      */
-    public static function get_title(int $id): ?string
-    {
-        $obj = self::find($id);
-        foreach ($obj->main_descriptions as $main_description) {
-            if ($main_description->language_id == Language::getStatus()->id) {
-                return $main_description->title;
-            }
-        }
-
-        return null;
-    }
-
     public static function remove(int $id): void
     {
         self::find($id)->delete();
     }
 
+    /**
+     * @param array $data
+     * @return void
+     */
     public static function add(array $data): void
     {
         $obj = new self();

@@ -2,11 +2,14 @@
 
 namespace App\Livewire;
 
-use App\Models\Product;
 use App\Models\Wishlist;
 
 trait addToFavoriteTrait
 {
+    /**
+     * @param int $id
+     * @return void
+     */
     public function addToFavorite(int $id): void
     {
         Wishlist::add($id);

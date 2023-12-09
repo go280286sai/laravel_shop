@@ -11,6 +11,9 @@ use Illuminate\Contracts\View\View;
 
 class OrderController extends Controller
 {
+    /**
+     * @return View
+     */
     public function index(): View
     {
         $orders = Order::where('user_id', auth()->user()->id)->get();
@@ -18,6 +21,10 @@ class OrderController extends Controller
         return view('client.user.orders.index', ['orders' => $orders]);
     }
 
+    /**
+     * @param int $id
+     * @return View
+     */
     public function view(int $id): View
     {
         $order = Order::find($id)->where('user_id', auth()->user()->id)->first();

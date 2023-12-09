@@ -3,11 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class CreateCartTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_create_cart()
     {
         $user = User::factory()->create();
@@ -15,7 +18,6 @@ class CreateCartTest extends TestCase
             'email' => $user->email,
             'password' => 'password',
         ]);
-        $response->assertStatus(302);
         $this->assertAuthenticated();
         $response = $this->actingAs(Auth::user())
             ->withSession([

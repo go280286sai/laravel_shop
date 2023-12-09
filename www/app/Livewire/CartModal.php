@@ -2,10 +2,8 @@
 
 namespace App\Livewire;
 
-use App\Models\Language;
 use App\Models\Product;
-
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
@@ -13,54 +11,118 @@ use Livewire\Component;
 
 class CartModal extends Component
 {
+    /**
+     * @var array
+     */
     public array $carts = [];
+    /**
+     * @var int
+     */
     #[Validate('required')]
-    public int $new_qty=0;
+    public int $new_qty = 0;
+    /**
+     * @var int
+     */
     public int $ide;
 
+    /**
+     * @return void
+     */
     public function mount(): void
     {
         if (Session::has('cart')) {
             $this->carts = Session::get('cart');
+
             Product::translate();
         }
     }
 
-    public function save($id)
+    /**
+     * @param $id
+     * @return void
+     */
+    public function save($id): void
     {
-        $this->validate(['new_qty' => 'numeric|nullable|gt:0'], ['new_qty.gt' => 'The quantity must be greater than 0.']);
+        $this->validate(
+            ['new_qty' => 'numeric|nullable|gt:0'],
+            ['new_qty.gt' => 'The quantity must be greater than 0.']
+        );
+
         Product::updateCart($id, $this->new_qty);
+
         $this->refresh();
-}
+    }
+
+    /**
+     * @return void
+     */
     #[On('cart_reload')]
-    public function refresh()
+    public function refresh(): void
     {
-        $this->js("window.location.reload();");
+        $this->js('window.location.reload();');
     }
 
-    public function clear()
+    /**
+     * @return void
+     */
+    public function clear(): void
     {
-        $this->redirect('/cart/clear');
+        Product::clear();
+
+        $this->redirect('/');
     }
 
-    public function store()
+    /**
+     * @return void
+     */
+    public function continue(): void
     {
-        $this->redirect("/cart/store");
+        $this->redirect('/');
     }
 
-    public function update(int $id, int $qty)
+    /**
+     * @return void
+     */
+    public function store(): void
+    {
+        $this->redirect('/cart/store');
+    }
+
+    /**
+     * @return void
+     */
+    public function delivery(): void
+    {
+        $this->redirect('/cart/delivery');
+    }
+
+    /**
+     * @param int $id
+     * @param int $qty
+     * @return void
+     */
+    public function update(int $id, int $qty): void
     {
         Product::updateCart($id, $qty);
+
         $this->refresh();
     }
 
-    public function remove(int $id)
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function remove(int $id): void
     {
         Product::removeCart($id);
+
         $this->refresh();
     }
 
-    public function render()
+    /**
+     * @return View
+     */
+    public function render(): View
     {
         return view('livewire.cart-modal', ['carts' => $this->carts]);
     }

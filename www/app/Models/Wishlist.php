@@ -15,19 +15,22 @@ class Wishlist extends Model
      */
     public static function add(int $id): true
     {
-        $wishlists_array = [];
+        $wishlists_array = array();
         $wishlists_array[] = Product::find($id);
+
         if (! Session::has('wishlist')) {
             Session::put('wishlist', $wishlists_array);
 
             return true;
         }
+
         $wishlists = Session::get('wishlist');
         foreach ($wishlists as $wishlist) {
             if ($wishlist->id == $id) {
                 return true;
             }
         }
+
         $wishlists[] = $wishlists_array[0];
         Session::put('wishlist', $wishlists);
 
@@ -42,11 +45,14 @@ class Wishlist extends Model
         if (! Session::has('wishlist')) {
             return false;
         }
+
         $wishlists = Session::get('wishlist');
         $filteredArray = array_filter($wishlists, function ($item) use ($id) {
             return $item['id'] !== $id;
         });
+
         $updatedArray = array_values($filteredArray);
+
         Session::put('wishlist', $updatedArray);
 
         return true;

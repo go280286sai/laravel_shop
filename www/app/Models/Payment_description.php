@@ -10,11 +10,17 @@ class Payment_description extends Model
 {
     use HasFactory;
 
+    /**
+     * @return BelongsTo
+     */
     public function payment(): BelongsTo
     {
         return $this->belongsTo(Payment::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);

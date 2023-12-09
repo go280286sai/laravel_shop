@@ -15,21 +15,33 @@ class Product extends Model
 {
     use HasFactory;
 
+    /**
+     * @return BelongsTo
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function product_gallery(): HasMany
     {
         return $this->hasMany(Product_gallery::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function product_descriptions(): HasMany
     {
         return $this->hasMany(Product_description::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function order_products(): HasMany
     {
         return $this->hasMany(Order_product::class);
@@ -40,14 +52,16 @@ class Product extends Model
      */
     public static function add_to_cart(int $id, int $qty): string
     {
-        $is_product = DB::table("products")
-            ->join("product_descriptions", "products.id", "=", "product_descriptions.product_id")
-            ->select("products.*", "product_descriptions.title")
-            ->where("product_descriptions.language_id", Language::getStatus()->id)
+        $is_product = DB::table('products')
+            ->join('product_descriptions', 'products.id', '=', 'product_descriptions.product_id')
+            ->select('products.*', 'product_descriptions.title')
+            ->where('product_descriptions.language_id', Language::getStatus()->id)
             ->where('products.id', $id)
             ->first();
+
         $amount = $is_product->amount;
         $amount < $qty ? $qty = $amount : $qty;
+
         if (Session::has('cart') && Session::get('cart') != []) {
             $products = Session::get('cart');
             foreach ($products as $product) {
@@ -63,12 +77,13 @@ class Product extends Model
             Session::put('cart', $products);
 
             return 'Success';
-        } else {
-            $products = [];
-            $is_product->qty = $qty;
-            $products[] = $is_product;
-            Session::put('cart', $products);
         }
+
+        $products = [];
+        $is_product->qty = $qty;
+        $products[] = $is_product;
+
+        Session::put('cart', $products);
 
         return 'Success';
     }
@@ -117,6 +132,7 @@ class Product extends Model
             ->select('products.id', 'title')
             ->where('language_id', Language::getStatus()->id)
             ->get();
+
         if (Session::has('cart')) {
             $cart = Session::get('cart');
             foreach ($cart as $item) {
@@ -150,29 +166,15 @@ class Product extends Model
     /**
      * @author Aleksander Storchak <go280286sai@gmail.com>
      */
-    public static function get_path_product(int $id): array
-    {
-        $path = [];
-        $path['product_id'] = $id;
-        $products = Product::get_category($id);
-        $path['title_product'] = $products['title_product'];
-        $path['category_id'] = $products['category_id'];
-        $category = Category::get_main($products['category_id']);
-        $path['main_id'] = $category['main_id'];
-        $path['title_category'] = $category['title_category'];
-        $path['title_main'] = Main::get_title($category['main_id']);
-
-        return $path;
-    }
-
-    /**
-     * @author Aleksander Storchak <go280286sai@gmail.com>
-     */
     public static function clear(): void
     {
         Session::remove('cart');
     }
 
+    /**
+     * @param int $id
+     * @return void
+     */
     public static function toggle(int $id): void
     {
         $obj = self::find($id);
@@ -180,24 +182,37 @@ class Product extends Model
         $obj->save();
     }
 
+    /**
+     * @param array $data
+     * @param $id
+     * @return void
+     */
     public static function set_update(array $data, $id): void
     {
         $obj = self::find($id);
         $obj->category_id = $data['category'];
         $obj->slug = Str::slug($data['title_1']);
+
         if ($obj->price != $data['new_price']) {
             $obj->old_price = $obj->price;
             $obj->price = $data['new_price'];
         }
+
         $obj->amount = $data['amount'];
+
         Product_description::set_update($data, $id);
+
         if (isset($data['img'])) {
-            Storage::delete('/uploads/img/'.$obj->img);
+            Storage::delete('/uploads/img/' . $obj->img);
             $obj->img = $data['img'];
         }
         $obj->save();
     }
 
+    /**
+     * @param array $data
+     * @return void
+     */
     public static function add(array $data): void
     {
         $obj = new self();
@@ -209,9 +224,14 @@ class Product extends Model
         $obj->status = 1;
         $obj->hit = 0;
         $obj->save();
+
         Product_description::set_update($data, $obj->id);
     }
 
+    /**
+     * @param int $id
+     * @return void
+     */
     public static function remove(int $id): void
     {
         self::find($id)->delete();
