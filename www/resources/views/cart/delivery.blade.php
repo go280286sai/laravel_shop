@@ -1,18 +1,11 @@
 @extends('layouts.layout')
 
 @section('content')
-    @switch($delivery)
-        @case(1)
-            @include('cart.deliveries.newpost')
-            @break
-
-        @case(2)
-            @include('cart.deliveries.ukrpost')
-            @break
-
-        @default
-            @include('cart.deliveries.newpost')
-    @endswitch
+    @if($id == 1)
+        @include("cart.deliveries.newpost")
+    @elseif($id == 2)
+        @include("cart.deliveries.ukrpost")
+    @endif
 <div class="container">
     <div class="row-md-6 offset-md-2">
         <table class="table align-middle">

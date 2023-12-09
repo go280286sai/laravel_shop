@@ -2,23 +2,31 @@
 
 namespace App\Livewire;
 
-use App\Models\Language;
-use App\Models\Product;
-use Exception;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 class ProductModel extends Component
 {
     use addToCartTrait, addToFavoriteTrait;
 
+    /**
+     * @var int
+     */
     public int $id;
 
-    public function mount(int $id)
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function mount(int $id): void
     {
         $this->id = $id;
     }
 
-    public function render()
+    /**
+     * @return View
+     */
+    public function render(): View
     {
         return view('livewire.product-model');
     }

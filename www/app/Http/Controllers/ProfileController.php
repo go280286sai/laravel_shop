@@ -16,35 +16,48 @@ use Illuminate\Support\Facades\Redirect;
 
 class ProfileController extends Controller
 {
+    /**
+     * @return View
+     */
     public function index(): View
     {
         return view('client.pages.dashboard');
     }
 
+    /**
+     * @return View
+     */
     public function orders(): View
     {
         return view('client.pages.orders');
     }
 
+    /**
+     * @return View
+     */
     public function history(): View
     {
         return view('client.pages.history');
     }
 
+    /**
+     * @return View
+     */
     public function messages(): View
     {
         return view('client.pages.messages');
     }
 
+    /**
+     * @return View
+     */
     public function profile(): View
     {
         $user = User::find(Auth::user()->getAuthIdentifier());
         $description = $user->user_descriptions->first();
-        if (! is_null($description)) {
-            $description = $description->toArray();
-        } else {
-            $description = [];
-        }
+
+        $description = !is_null($description)?$description->toArray():[];
+
         $genders = Gender::all();
         $lang = Language::getStatus();
 
@@ -57,6 +70,9 @@ class ProfileController extends Controller
             ]);
     }
 
+    /**
+     * @return View
+     */
     public function feedback(): View
     {
         $user = Auth::user()->email;
@@ -64,12 +80,17 @@ class ProfileController extends Controller
         return view('client.user.feedback', ['client' => $user]);
     }
 
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function send_feedback(Request $request): RedirectResponse
     {
         $request->validate([
             'message' => 'required|string',
             'client' => 'required|string',
         ]);
+
         $admin = User::where('email', env('MAIL_FROM_ADDRESS'))->first();
         $admin->notify(new FeedbackNotification($request->client, $request->message));
 
@@ -107,6 +128,8 @@ class ProfileController extends Controller
 
     /**
      * Delete the user's account.
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function destroy(Request $request): RedirectResponse
     {

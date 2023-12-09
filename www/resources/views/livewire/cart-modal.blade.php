@@ -1,12 +1,5 @@
 <div>
-    <div class="modal fade" id="cart-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{__('messages.cart')}}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
+
     <table class="table table-hover">
         <tr class="table-dark">
             <th>{{__('messages.title')}}</th>
@@ -62,19 +55,26 @@
     </div>
     @if($total_qty > 0)
         <div class="modal-footer">
-            <button type="button" class="btn btn-success ripple" data-bs-dismiss="modal" wire:click="refresh"
+            <button type="button" class="btn btn-success ripple" data-bs-dismiss="modal" wire:click="continue"
                     title="{{__('messages.continue')}}">{{__('messages.continue')}}
             </button>
-            <strong wire:click="store">
-                <div class="btn btn-primary" title="{{__('messages.order')}}">{{__('messages.order')}}</div>
-            </strong>
+
+            @if(\Illuminate\Support\Facades\URL::current()==env('APP_URL').'/cart/store')
+                <strong wire:click="delivery">
+                    <div class="btn btn-primary" title="{{__('messages.order')}}">{{__('messages.order')}}</div>
+                </strong>
+            @else
+                <strong wire:click="store">
+                    <div class="btn btn-primary" title="{{__('messages.order')}}">{{__('messages.order')}}</div>
+                </strong>
+            @endif
+
+
+
             <strong wire:click="clear" wire:confirm="{{__('messages.are_you_sure')}}">
                 <div class="btn btn-danger" title="{{__('messages.clean_cart')}}">{{__('messages.clean_cart')}}</div>
             </strong>
         </div>
 @endif
 </div>
-            </div>
-        </div>
-    </div>
-</div>
+

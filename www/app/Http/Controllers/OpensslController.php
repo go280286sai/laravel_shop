@@ -34,6 +34,7 @@ class OpensslController extends Controller
             'key' => 'required|string',
             'url' => 'required|string',
         ]);
+
         Ssl_search::add_resource(['name' => $validated['name'], 'key' => $validated['key'], 'url' => $validated['url']]);
 
         return redirect()->back();

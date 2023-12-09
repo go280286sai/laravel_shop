@@ -62,6 +62,7 @@ class CategoriesTest extends TestCase
             'keywords_3' => 'keywords_3_1',
             'content_3' => 'content_3_1',
         ];
+
         Category_description::set_update($title, $id);
         $this->assertDatabaseHas('category_descriptions', ['title' => 'title_1_1', 'description' => 'description_1_1',
             'keywords' => 'keywords_1_1', 'content' => 'content_1_1']);

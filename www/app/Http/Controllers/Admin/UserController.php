@@ -58,6 +58,7 @@ class UserController extends Controller
      */
     public function edit(int $id): View
     {
+
         $user = User::join('user_descriptions', 'users.id', '=', 'user_descriptions.user_id')
             ->select('users.id as id', 'user_descriptions.id as user_description_id', 'users.name', 'user_descriptions.last_name',
                 'user_descriptions.phone', 'user_descriptions.birthday', 'users.email', 'user_descriptions.gender_id')

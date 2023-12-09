@@ -10,11 +10,17 @@ class Payment extends Model
 {
     use HasFactory;
 
+    /**
+     * @return HasMany
+     */
     public function payment_descriptions(): HasMany
     {
         return $this->hasMany(Payment_description::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function order_products(): HasMany
     {
         return $this->hasMany(Order_product::class);

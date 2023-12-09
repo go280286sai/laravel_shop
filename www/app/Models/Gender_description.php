@@ -10,11 +10,17 @@ class Gender_description extends Model
 {
     use HasFactory;
 
+    /**
+     * @return BelongsTo
+     */
     public function gender(): BelongsTo
     {
         return $this->belongsTo(Gender::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function languages(): BelongsTo
     {
         return $this->belongsTo(Language::class);

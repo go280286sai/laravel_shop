@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\User_description;
 use Illuminate\Database\Seeder;
 
 class AddUserSeeder extends Seeder
@@ -19,5 +20,10 @@ class AddUserSeeder extends Seeder
         $obj->status = 1;
         $obj->is_admin = 1;
         $obj->save();
+//        $desc = new User_description();
+//        $desc->user_id = $obj->id;
+//        $desc->last_name = 'admin';
+//        $desc->gender_id = 1;
+//        $desc->save();
     }
 }

@@ -16,16 +16,19 @@ class MainController extends Controller
     public function index(): View
     {
         $lang = Language::getStatus()->id;
+
         if (Cache::has('sliders')) {
             $sliders = Cache::get('sliders');
         } else {
             $sliders = Slider::all();
             Cache::put('sliders', $sliders);
         }
+
         $products = ActionMainClass::get_hits(6);
 
         return view('main.index', compact(['sliders', 'products', 'lang']));
     }
+
     /**
      * @throws ValidationException
      */
