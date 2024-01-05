@@ -1,0 +1,1 @@
+{"version":1,"defects":{"domain\\EntityTest::test_main":8,"app\\TitleAppTest::test_title":7},"times":{"domain\\EntityTest::test_main":73.569,"app\\TitleAppTest::test_title":1.192,"app\\ListCategoriesAppTest::test_list":7.313,"app\\ListProductsAppTest::test_list_products":21.225,"app\\ProductAppTest::test_product":2.066}}

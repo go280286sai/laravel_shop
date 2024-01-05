@@ -1,0 +1,1 @@
+{"version":1,"defects":{"CategoryParserTest::test_run":5,"CategoryParserTest::test_list_products":5},"times":{"CategoryParserTest::test_run":190.542,"CategoryParserTest::test_list_products":71.249}}

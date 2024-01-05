@@ -21,6 +21,9 @@
             <li><a href="{{env('APP_URL')}}/admin/users">
                     <div class="btn btn_profile">Пользователи</div>
                 </a></li>
+            <li><a href="{{env('APP_URL')}}/admin/resources">
+                    <div class="btn btn_profile">Ресурсы</div>
+                </a></li>
             <li><a href="{{env('APP_URL')}}/admin/openssl">
                     <div class="btn btn_profile">Шифрование данных</div>
                 </a></li>

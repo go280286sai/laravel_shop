@@ -11,6 +11,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\OpensslController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\IsAdminMiddleware;
 use App\Http\Middleware\IsAuthMiddleware;
@@ -106,6 +107,9 @@ Route::prefix('admin')->middleware([IsAuthMiddleware::class, IsAdminMiddleware::
         Route::post('/user/add_comment', [UserController::class, 'add_comment'])->name('admin.users.add_comment');
         Route::get('/user/email/{id}', [UserController::class, 'email'])->name('profile.email');
         Route::post('/user/send_email', [UserController::class, 'send_email'])->name('profile.send_email');
+        Route::resource('/resources', ResourceController::class)->names('admin.resources');
     });
 //------------------------------------------------------------------
-require __DIR__.'/auth.php';
+
+//------------------------------------------------------------------
+require __DIR__ . '/auth.php';
