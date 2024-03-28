@@ -1,0 +1,26 @@
+{
+    "name": "go280286sai/search_json",
+    "description": "Search data in the json file",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Aleksander",
+            "email": "go280286sai@gmail.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "go280286sai\\search_json\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "go280286sai\\search_json\\Providers\\SearchProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,91 @@
+apiVersion : v1
+kind: Namespace
+metadata:
+  name: dev-work
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: my-deployment
+    namespace: dev-work
+    labels:
+        app: my-app-deployment
+spec:
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+    selector:
+        matchLabels:
+            project: my-app
+    template:
+        metadata:
+            labels:
+                project: my-app
+        spec:
+            containers:
+                - name: swoole-app
+                  image: openswoole/swoole:latest
+                  ports:
+                  - containerPort: 9501
+                  volumeMounts:
+                  - name: swoole-config
+                    mountPath: /var/www   # Путь в контейнере, куда будет монтироваться папка
+#                - name: adminer
+#                  image: adminer:latest
+#                  ports:
+#                      - containerPort: 8080
+            volumes:
+              - name: swoole-config
+                hostPath:
+                  path: /home/alex/Dev/php/shop/swoole
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  namespace: dev-work
+  name: my-autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-deployment
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: my-service
+    namespace: dev-work
+    labels:
+        env: dev
+        owner: AleksandrStorchak
+spec:
+    selector:
+        project: my-app
+    ports:
+        - protocol: TCP
+          name: swooleport
+          port: 8086
+          targetPort: 9501
+#        - name: http
+#          port: 8080
+#          targetPort: 8080
+#          protocol: TCP
+    type: LoadBalancer

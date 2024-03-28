@@ -1,0 +1,113 @@
+version: '3'
+
+services:
+     web:
+       build: ./nginx
+       container_name: learn_nginx
+       volumes:
+         - ./www:/usr/share/nginx/html
+       restart: unless-stopped
+       ports:
+         - "80:80"
+       environment:
+         - NGINX_HOST=localhost
+         - NGINX_PORT=80
+         - opcache.enable=1
+         - opcache.memory_consumption=128
+         - opcache.interned_strings_buffer=8
+         - opcache.max_accelerated_files=4000
+         - opcache.revalidate_freq=60
+         - opcache.enable_cli=1
+         - php.xdebug.max_nesting_level=500
+         - PHP_IDE_CONFIG=serverName=Docker
+         - XDEBUG_MODE=debug,develop
+       networks:
+         - mynetwork
+     learn_mysql:
+       build: ./mysql
+       container_name: learn_mysql
+       environment:
+         MYSQL_ROOT_PASSWORD: masterkey
+         MYSQL_DATABASE: learn_mysql
+       restart: unless-stopped
+       ports:
+         - "3282:3306"
+       volumes:
+         - learn-db:/var/lib/mysql
+       networks:
+         - mynetwork
+     swoole:
+       image: openswoole/swoole
+       container_name: learn_swoole
+       environment:
+         DISABLE_DEFAULT_SERVER: 1
+       ports:
+         - 8084:9501
+       volumes:
+         - ./swoole:/var/www
+       networks:
+         - mynetwork
+       command: php server.php
+     phpmyadmin:
+       image: phpmyadmin/phpmyadmin:latest
+       restart: always
+       ports:
+         - '8088:80'
+       environment:
+         PMA_ARBITRARY: 0
+         PMA_HOST: 'learn_mysql'
+         MYSQL_ROOT_PASSWORD: 'masterkey'
+       depends_on:
+         - learn_mysql
+       networks:
+         - mynetwork
+#     memcached:
+#       image: 'memcached:alpine'
+#       ports:
+#         - '11211:11211'
+#     redis:
+#       image: 'redis:alpine'
+#       ports:
+#         - '6379:6379'
+  #  mongo:
+#      image: mongo:6.0.6
+#      ports:
+#        - 27017:27017
+#      volumes:
+#        - learn-db:/data/db
+#      environment:
+#        MONGO_INITDB_ROOT_USERNAME: root
+#        MONGO_INITDB_ROOT_PASSWORD: masterkey
+#    pgadmin4:
+#      image: fenglc/pgadmin4
+#      container_name: pgadmin4
+#      restart: always
+#      volumes:
+#        - ./postgres:/var/lib/pgadmin
+#      environment:
+#          PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+#          PGADMIN_DEFAULT_PASSWORD: admin
+#      ports:
+#        - "5050:5050"
+#    adminer:
+#      image: adminer
+#      restart: always
+#      ports:
+#        - "8086:8080"
+
+#     rebbitmq:
+#       image: rabbitmq:3-management
+#       container_name: learn_rabbitmq
+#       restart: unless-stopped
+#       ports:
+#         - "5672:5672"
+#         - "15672:15672"
+#       networks:
+#         - mynetwork
+##      login: guest
+##      password: guest
+networks:
+  mynetwork:
+    driver: bridge
+volumes:
+  learn-db:
