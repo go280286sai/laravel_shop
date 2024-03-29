@@ -1,17 +1,9 @@
 # Конфигурации:
 ### - NGINX
-### - APACHE
+### - SWOOLE
 ### - MYSQL
 ### - PHPMYADMIN
-### - NODEJS
 ### - REDIS
-### - MONGO
-### - DJANGO
-### - FASTAPI
-### - FLASK
-### - POSTGRES
-### - ADMINER
-### - MEMCACHED
 
 Для запуска контейнера необходимо раскомментировать нужные и выполнить:
 docker-compose up --build ('--build' необходим при первом запуске)
@@ -21,16 +13,40 @@ docker-compose up --build ('--build' необходим при первом за
 ### Docker-compose:
 
     web:
-      build: ./nginx
-      container_name: learn_nginx
-      volumes:
-        - ./www/php:/usr/share/nginx/html/www
-      restart: unless-stopped
-      ports:
-        - "8082:80"
-      environment:
-        - NGINX_HOST=localhost
-        - NGINX_PORT=80
+       build: ./nginx
+       container_name: learn_nginx
+       volumes:
+         - ./www:/usr/share/nginx/html
+       restart: unless-stopped
+       ports:
+         - "80:80"
+       environment:
+         - NGINX_HOST=localhost
+         - NGINX_PORT=80
+         - opcache.enable=1
+         - opcache.memory_consumption=128
+         - opcache.interned_strings_buffer=8
+         - opcache.max_accelerated_files=4000
+         - opcache.revalidate_freq=60
+         - opcache.enable_cli=1
+         - php.xdebug.max_nesting_level=500
+         - PHP_IDE_CONFIG=serverName=Docker
+         - XDEBUG_MODE=debug,develop
+       networks:
+         - mynetwork
+    learn_mysql:
+       build: ./mysql
+       container_name: learn_mysql
+       environment:
+         MYSQL_ROOT_PASSWORD: masterkey
+         MYSQL_DATABASE: learn_mysql
+       restart: unless-stopped
+       ports:
+         - "3282:3306"
+       volumes:
+         - learn-db:/var/lib/mysql
+       networks:
+         - mynetwork
 
 ### Dockerfile:
 
@@ -43,82 +59,22 @@ http://['Ваш ip']:8082/
 
 http://localhost:8082/
 
-## APACHE
+## SWOOLE
 
 ### Docker-compose:
 
-    apache:
-      build: ./apache
-      container_name: apache
-      volumes:
-        - ./www/php:/var/www/html
-      ports:
-        - "8084:80"
-      environment:
-        WEB_DOCUMENT_ROOT: "/var/www/html"
-        WEB_DOCUMENT_INDEX: index.php
-        PHP_MEMORY_LIMIT: 1024M
-        PHP_UPLOAD_MAX_FILESIZE: 512M
-        PHP_POST_MAX_SIZE: 512M
-        PHP_DISPLAY_ERRORS: 1
-        php.xdebug.max_nesting_level: 500
-        XDEBUG_CONFIG: "xdebug.mode=debug"
-        XDEBUG_MODE: coverage
-
-### Dockerfile:
-
-    FROM webdevops/php:8.2-alpine
-    ENV WEB_DOCUMENT_ROOT=/app \
-    WEB_DOCUMENT_INDEX=index.php \
-    WEB_ALIAS_DOMAIN=*.vm \
-    WEB_PHP_TIMEOUT=600 \
-    WEB_PHP_SOCKET=""
-    ENV WEB_PHP_SOCKET=127.0.0.1:9000
-    COPY conf/ /opt/docker/
-    RUN set -x \
-    # Install apache
-    && apk-install \
-    apache2 \
-    apache2-ctl \
-    apache2-utils \
-    apache2-proxy \
-    apache2-ssl \
-    # Fix issue with module loading order of lbmethod_* (see https://serverfault.com/questions/922573/apache2-fails-to-start-after-recent-update-to-2-4-34-no-clue-why)
-    && sed -i '2,5{H;d}; ${p;x;s/^\n//}' /etc/apache2/conf.d/proxy.conf \
-    && sed -ri ' \
-    s!^(\s*CustomLog)\s+\S+!\1 /proc/self/fd/1!g; \
-    s!^(\s*ErrorLog)\s+\S+!\1 /proc/self/fd/2!g; \
-    ' /etc/apache2/httpd.conf \
-    && docker-run-bootstrap \
-    && docker-image-cleanup
-    EXPOSE 80 443
-
-http://['Ваш ip']:8084/
-
-http://localhost:8084/
-
-## NODEJS
-
-### Docker-compose:
-
-    nodejs:
-      image: node:18-alpine
-      container_name: nodejs
-      restart: unless-stopped
-      ports:
-        - "5000:5004"
-      volumes:
-        - ./www/node:/usr/src/app
-      working_dir: /usr/src/app
-      command: npm start
-
-Сам NODEJS находится /www/node
-
-/www/node/client содержит React, или можно любой другой framework
-
-http://['Ваш ip']:5000/
-
-http://localhost:5000/
+    swoole:
+       image: openswoole/swoole
+       container_name: learn_swoole
+       environment:
+         DISABLE_DEFAULT_SERVER: 1
+       ports:
+         - 8084:9501
+       volumes:
+         - ./swoole:/var/www
+       networks:
+         - mynetwork
+       command: php server.php
 
 ## MYSQL & PHPMYADMIN
 
@@ -184,206 +140,170 @@ host: ['Ваш ip']
 
 port: 6379
 
-## MONGO
+# Интернет - магазин реализован на платформе Laravel. 
 
-### Docker-compose:
+## Стек технологий: PHP 8.2, MYSQL 8, Laravel, Nginx, Swoole
 
-    mongo:
-      image: mongo:6.0.6
-      ports:
-        - 27017:27017
-      volumes:
-        - learn-db:/data/db
-      environment:
-        MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: masterkey
+### Основная цель создания интернет - магазина с использованием современных технологий.
 
-host: ['Ваш ip']
-
-port: 27017
-
-LOGIN: root
-
-PASSWORD: masterkey
-
-## POSTGRES
-
-### Docker-compose:
-
-     postgres:
-          image: postgres:15.3-alpine
-          container_name: postgres
-          restart: always
-          ports:
-            - "5432:5432"
-          environment:
-            - POSTGRES_USER=root
-            - POSTGRES_PASSWORD=masterkey
-            - POSTGRES_DB=django_dev
- 
-host: ['Ваш ip']
-
-port: 5432
-
-LOGIN: root
-
-PASSWORD: masterkey
-
-## PGADMIN4
-
-### Docker-compose:
-
-    pgadmin4:
-      image: fenglc/pgadmin4
-      container_name: pgadmin4
-      restart: always
-      volumes:
-        - ./postgress:/var/lib/pgadmin
-      environment:
-          PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-          PGADMIN_DEFAULT_PASSWORD: admin
-      ports:
-        - "5050:5050"
-
-email: pgadmin4@pgadmin.org
-
-password: admin
-
-Create server:
-
-host: ['Ваш ip']
-
-port: 5432
-
-db: django_dev
-
-login: root
-
-password: masterkey
-
-## ADMINER
-
-### Docker-compose:
-
-    adminer:
-      image: adminer
-      restart: always
-      ports:
-        - "8086:8080"
-
-http://['Ваш ip']:8086/
-
-http://localhost:8086/
-
-## Django
-
-### Docker-compose:
-
-    django:
-      build: ./www/django
-      container_name: django
-      command: python manage.py runserver 0.0.0.0:8000
-      volumes:
-        - ./www/django:/usr/src/app/
-      ports:
-        - "8000:8000"
-
-### Dockerfile
-
-    FROM python:3.10-alpine
-    RUN apk update \
-    add \
-    build-base \
-    postgresql \
-    postgresql-dev \
-    libpq
-    RUN mkdir /usr/src/app
-    WORKDIR /usr/src/app
-    COPY ./requirements.txt .
-    RUN pip install -r requirements.txt
-    ENV PYTHONUNBUFFERED 1
-    COPY . .
+![](./img/1.png)
+Возможности:
+1. Используя технологию DDD и simple_html_dom, выполнять парсинг сайтов 
+других интернет - магазинов с возможностью загрузки полученных данных используя микросервис swoole
     
-    CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+        <?php
+        include __DIR__ . '/vendor/autoload.php';
+        
+        use OpenSwoole\Http\Server;
+        use OpenSwoole\Http\Request;
+        use OpenSwoole\Http\Response;
+        
+        $server = new OpenSwoole\HTTP\Server("localhost", 9501, OpenSwoole\Server::POOL_MODE, OpenSwoole\Constant::SOCK_TCP);
+        $server->on("start", function (Server $server) {
+            echo "OpenSwoole http server is started\n";
+        });
+        $server->on('WorkerStart', function (OpenSwoole\Server $server, int $workerId) {
+            echo "Worker {$workerId} started\n";
+        });
+        $server->on('WorkerStop', function (OpenSwoole\Server $server, int $workerId) {
+            echo "Worker {$workerId} stopped\n";
+        });
+        
+        $server->on("request", function (Request $request, Response $response) {
+            go(function () use ($request, $response) {
+                if ($request->getMethod() == 'POST') {
+                    $response->header("Content-Type", "text/json");
+                    $response->header("Charset", "UTF-8");
+                    $response->end("{'status':'accepted'}");
+                    $run = new \Root\Parser\ui\Route();
+                    $run->add($request->post);
+                } else {
+                    $response->status(403);
+                    $response->end("{'status':'forbidden'}");
+                }
+            });
+        });
 
-http://['Ваш ip']:8000/
 
-http://localhost:8000/
+        $server->start();
+            public static function run(string $url): bool
+            {
+            try {
+            $object = array();
 
-## FASTAPI
+            echo "Parsing: " . $url . " is start \n";
+            // Get main title
+            $object['main'] = self::get_title($url);
+            echo "Parsing: " . $object['main'] . " title \n";
+            // Get categories
+            $object['categories'] = self::get_categories($url);
+            $count_categories = count($object['categories']);
+            echo "Parsing: " . $count_categories . " categories \n";
+            // Get products
+            $count_element = 0;
+            echo "Parsing: " . $count_element . " of " . $count_categories. "\n";
 
-### Docker-compose:
+            foreach ($object['categories'] as $value) {
+                $object['categories'][$count_element]['products'][] = self::get_products($value);
+                $count_element++;
+            }
 
-     fastapi:
-       build: ./www/fastapi
-       container_name: fastapi
-       ports:
-         - "8000:8000"
-       volumes:
-         - ./www/fastapi:/code
+            // End parsing
+            echo "Parsing success \n";
+            // Save json
+            $json = json_encode($object, JSON_UNESCAPED_UNICODE);
+            $file = fopen(__DIR__ . "/jsons/" . $object['main'] . ".json", "w");
+            fwrite($file, $json);
+            fclose($file);
+            // Log
+            Parser::log($url . " is parsed");
 
-### Dockerfile
+            return true;
+        } catch (\Exception $e) {
+            Error::log("Error: " . $e->getMessage() . " at line: " . $e->getLine());
+            return false;
+        }
+        }      
+Запросы обрабатываются ассинхронно.
 
-    FROM python:3.10-alpine
-    # Устанавливаем переменные окружения
-    ENV PYTHONDONTWRITEBYTECODE 1
-    ENV PYTHONUNBUFFERED 1
-    # Устанавливаем рабочую директорию внутри контейнера
-    WORKDIR /app
-    # Копируем зависимости в контейнер
-    COPY requirements.txt /app/
-    # Устанавливаем зависимости
-    RUN pip install --no-cache-dir -r requirements.txt
-    # Копируем остальные файлы в контейнер
-    COPY . /app/
-    # Указываем команду, которая будет выполняться при запуске контейнера
-    CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+      location /swoole {
+      proxy_pass       http://localhost:8084;
+      proxy_set_header Host      $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      }
+#### 2. обмен данных выполняется с использованием текена;
 
-http://['Ваш ip']:8000/
+     public static function getToken(): string
+     {
+     try {
+     $token = DB::table('personal_access_tokens')
+     ->where('tokenable_id', '=', Auth::id())
+     ->select('token')
+     ->get();
+               if (count($token) > 0) {
+                   $token = $token[0]->token;
+               } else {
+                   $token = Auth::user()->createToken('API TOKEN')->plainTextToken;
+               }
+           } catch (Exception $e) {
+               $token = Auth::user()->createToken('API TOKEN')->plainTextToken;
+           }
+           return $token;
+     }
 
-http://localhost:8000/
+        public function store(Request $request): RedirectResponse
+        {
+        $validated = $request->validate([
+        'target' => ['required', 'string', 'max:255', Rule::notIn(['null'])],
+        'resource' => ['required', 'string', 'max:255', Rule::notIn(['null'])],
+        'url' => ['required', 'string', 'max:255'],
+        ]);
+        $token = $this->get_token($request);
+        try {
+        Http::asForm()->post($validated['resource'], [
+        'target' => $validated['target'],
+        'url' => $validated['url'],
+        'token' => $token
+        ]);
 
-## FLASK
+            return redirect()->route('admin.exchanges.index')->with('status', 'Exchange created successfully!');
+        } catch (Exception) {
+            return redirect()->route('admin.exchanges.index')->with('error', 'Something went wrong.');
+        }
 
-### Docker-compose:
+    }
 
-     flask:
-       build: ./www/flask
-       container_name: flask
-       ports:
-         - "5000:5000"
-       volumes:
-         - ./www/flask:/app
+#### 3. Поддерка на 3-х языках;
 
-### Dockerfile
+#### 4. Наличие админ - панели для ручного ввода информации или корректировки текущего пользователя;
+![](./img/3.png)
+возможности:
+- поиск по данным пользователя;
+- временная блокировка пользователя;
+- отправка сообщение на почту пользователю;
+- добавить комментарий;
+- просмотреть данные пользователя;
+- удалить пользователя.
+Удаление пользователя выполняется с возможностью восстановления или удалить навсегда.
+#### 4. Наличие личного кабинета и возможность осуществлять контроль пользователей;
+![](./img/2.png)
 
-    FROM python:3.10-alpine
-    # Устанавливаем рабочую директорию внутри контейнера
-    WORKDIR /app
-    # Копируем файлы зависимостей в контейнер
-    COPY requirements.txt .
-    # Устанавливаем зависимости
-    RUN pip install --no-cache-dir -r requirements.txt
-    # Копируем остальные файлы проекта в контейнер
-    COPY . .
-    # Указываем переменные окружения
-    ENV FLASK_APP=app.py
-    ENV FLASK_RUN_HOST=0.0.0.0
-    # Открываем порт, на котором будет работать приложение
-    EXPOSE 5000
-    # Запускаем команду для запуска Flask приложения
-    CMD ["flask", "run"]
-
-http://['Ваш ip']:5000/
-
-http://localhost:5000/
-
-## MEMCACHED
-
-### Docker-compose:
-
- memcached:
-      image: 'memcached:alpine'
-      ports:
-        - '11211:11211'
-
+#### 5. Возможность добавлять товар в список желаний;
+![](./img/5.png)
+#### 6. Вывод товаров на главную категорию через предпочтения пользователей;
+![](./img/4.png)
+#### 7. Возможность добавить клиенту товар в корзину с последующим выбором доставке и оплаты;
+![](./img/6.png)
+![](./img/9.png)
+![](./img/10.png)
+Указывается статус и при изменении статуса на вылнено клиенту отправляется код наклодной автоматически
+#### 8. Администратор 
+![](./img/7.png)
+![](./img/8.png)
+Адинистратор может:
+- удалить заказ;
+- изменить статус;
+- распечать заказ.
+#### 9. Поиск с помощюь Json
+Для поисковой системы был написан плагин, который подойдет для любого сайта
+https://github.com/go280286sai/search_json
