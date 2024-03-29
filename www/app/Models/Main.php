@@ -35,14 +35,7 @@ class Main extends Model
      */
     public static function list(): mixed
     {
-        if (Cache::has('list')) {
-            return Cache::get('list');
-        }
-        $list = self::all();
-        Cache::put('list', $list);
-
-
-        return $list;
+        return self::all();
     }
 
     /**

@@ -1,0 +1,6 @@
+Success: https://bi.ua/ukr/sjuzhetno-rolevye-nabory/ is parsed, in time: 29-03-2024 08:25:31
+Success: https://bi.ua/ukr/myagkie-igrushki/ is parsed, in time: 29-03-2024 08:51:36
+Success: https://bi.ua/ukr/nastolnye-igry-i-pazly/ is parsed, in time: 29-03-2024 08:54:41
+Success: https://bi.ua/ukr/igrovie-figurki/ is parsed, in time: 29-03-2024 08:58:23
+Success: https://bi.ua/ukr/dlya-malishey/ is parsed, in time: 29-03-2024 09:02:38
+Success: https://bi.ua/ukr/roboty-i-transformery/ is parsed, in time: 29-03-2024 09:03:51

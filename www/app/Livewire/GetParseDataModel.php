@@ -14,7 +14,7 @@ class GetParseDataModel extends Component
     /**
      * @var bool
      */
-    public bool $status_download = false;
+    public bool $status_download = true;
 
     /**
      * @return RedirectResponse
@@ -38,15 +38,6 @@ class GetParseDataModel extends Component
         $this->js('window.location.reload();');
     }
 
-    /**
-     * @return void
-     */
-    public function mount(): void
-    {
-        if (Storage::files('/uploads/jsons') !== []) {
-            $this->status_download = true;
-        }
-    }
 
     /**
      * @return RedirectResponse
@@ -64,7 +55,7 @@ class GetParseDataModel extends Component
      */
     public function render(): View
     {
-        $resources = $resources = Resource_product::all();
+        $resources  = Resource_product::all();
         return view('livewire.get-parse-data-model', [
             'resources' => $resources, 'status_download' => $this->status_download
         ]);

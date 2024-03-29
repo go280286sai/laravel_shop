@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\GetParseDataClass;
 use App\Http\Controllers\Controller;
 use App\Models\Resource_product;
 use Exception;
@@ -18,7 +19,6 @@ class ExchangeController extends Controller
      */
     public function index(): View
     {
-
         return view('client.admin.exchange.index');
     }
 

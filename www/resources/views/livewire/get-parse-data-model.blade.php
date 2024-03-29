@@ -1,20 +1,10 @@
 <div>
-    @include("layouts.errors")
-    @if (session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
-    @endif
-    <div>
-        <div class="btn btn-dark" title="Вы действительно хотите удалить все данные?" wire:click="clearJsons">{{__('messages.remove_jsons')}}</div>
-        <div class="btn btn-dark" title="Вы действительно хотите удалить все данные?" wire:click="clearAll">{{__('messages.remove_all')}}</div>
-      @if(!$status_download)
-            <div class="btn btn-danger" disabled="disabled">{{__('messages.no_data')}}</div>
-        @else
-            <div class="btn btn-danger" title="Загрузить данные?" wire:click="download">{{__('messages.download_jsons')}}</div></div>
-      @endif
-
-    </div>
+    <div class="btn btn-dark" title="Вы действительно хотите удалить все данные?"
+         wire:click="clearJsons">{{__('messages.remove_jsons')}}</div>
+    <div class="btn btn-dark" title="Вы действительно хотите удалить все данные?"
+         wire:click="clearAll">{{__('messages.remove_all')}}</div>
+        <div class="btn btn-danger" title="Загрузить данные?"
+             wire:click="download">{{__('messages.download_jsons')}}</div>
     <form action="{{env('APP_URL').'/admin/exchange'}}" method="post">
         @csrf
         <div class="mb-3">
