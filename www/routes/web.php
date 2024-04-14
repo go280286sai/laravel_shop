@@ -74,6 +74,7 @@ Route::controller(ProfileController::class)->middleware([IsAuthMiddleware::class
     Route::get('/client/orders', [ClientOrderController::class, 'index'])->name('profile.orders');
     Route::get('/client/orders/{id}/view', [ClientOrderController::class, 'view'])
         ->name('profile.orders.view');
+        Route::get('/client/getOrder', [CartController::class, 'apiOrder']);
 });
 //----------------------------------------------------------------------------
 //Page is not found
@@ -118,4 +119,5 @@ Route::prefix('admin')->middleware([IsAuthMiddleware::class, IsAdminMiddleware::
         Route::resource('/messages', MessageController::class)->names('admin.messages');
     });
 //------------------------------------------------------------------
+
 require __DIR__ . '/auth.php';

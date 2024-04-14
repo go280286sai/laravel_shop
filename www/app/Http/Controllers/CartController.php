@@ -33,14 +33,25 @@ class CartController extends Controller
     /**
      * @author Aleksander Storchak <go280286sai@gmail.com>
      */
-    public function create(Request $request): RedirectResponse
+    public function create(Request $request)
     {
         $validated = $request->validate(
-            ['payment' => 'required|digits_between:1,5']);
+            ['id' => 'required|numeric',
+             'from'=> 'required|string',
+             'hash' => 'required|string'
+             ]
+       
+    );
+        
+        $id_transaction = $validated['id'];
+        $from = $validated['from'];
+        $hash = $validated['hash'];
+        $payment = 1;
+        // $payment = $validated['payment'];
 
-        $payment = $validated['payment'];
-
-        ActionCreateCartClass::create($payment);
+        $payments = ['payment'=>$payment, 'from'=>$from, 'hash'=>$hash, 'id_transaction'=>$id_transaction];
+       
+        ActionCreateCartClass::create($payments);
 
         return Redirect::route('home');
     }
@@ -99,17 +110,18 @@ class CartController extends Controller
 
     /**
      * @author Aleksander Storchak <go280286sai@gmail.com>
+     * @param Request $request
      */
-    public function order(Request $request, $id = 2): View
+    public function order(Request $request, $id = 1): View
     {
+    
         if ($request->isMethod('POST')) {
-            $request->validate([
+            $order = $request->validate([
                 'total_count' => 'required|numeric',
                 'total_sum' => 'required|numeric',
             ]);
 
-            $order = $request->only(['total_count', 'total_sum']);
-
+        
             Session::put('order', $order);
 
         } else {
@@ -119,8 +131,13 @@ class CartController extends Controller
 
             $id = $validated['id'];
             $order = Session::get('order');
+          
         }
-
+ 
         return view('cart.order', ['id' => $id, 'order' => $order]);
+    }
+    public function apiOrder(){
+        $order = Session::get('order');
+        return Response()->json($order);
     }
 }

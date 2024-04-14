@@ -16,7 +16,7 @@ class Order extends Model
      * @var string[]
      */
     protected $fillable = [
-        'user_id', 'notes', 'status', 'total', 'qty',
+        'user_id', 'notes', 'status', 'total', 'qty', 'id_transaction', 'from', 'hash'
     ];
 
     /**

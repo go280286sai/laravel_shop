@@ -18,7 +18,7 @@ class ActionCreateCartClass
      * @param int $payment
      * @return void
      */
-    public static function create(int $payment): void
+    public static function create(array $payments): void
     {
         if (Session::has('cart') && count(Session::get('cart')) > 0
             && Auth::check() && Session::has('delivery') && count(Session::get('delivery')) > 0
@@ -33,13 +33,17 @@ class ActionCreateCartClass
                     'user_id' => Auth::user()->id,
                     'notes' => json_encode($delivery),
                     'total' => $order['total_sum'],
-                    'qty' => $order['total_count']]
+                    'qty' => $order['total_count'],
+                    'id_transaction' => $payments['id_transaction'],
+                    'from'=>$payments['from'],
+                    'hash'=>$payments['hash']
+                    ]
                 );
                 foreach ($carts as $item) {
                     Order_product::add([
                         'order_id' => $order_id,
                         'product_id' => $item->id,
-                        'payment_id' => $payment,
+                        'payment_id' => $payments['payment'],
                         'delivery_id' => $delivery['service'],
                         'title' => $item->title,
                         'slug' => $item->slug,
