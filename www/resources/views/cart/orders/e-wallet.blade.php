@@ -6,7 +6,6 @@
 
     <div class="m-5" id="app"></div>
 
-      <!-- <livewire:crypto-pay-model /> -->
         </div>
     </div>
 </div>

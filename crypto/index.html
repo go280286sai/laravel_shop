@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleStorage Dapp</title>
+</head>
+<body>
+    <h1>SimpleStorage Dapp</h1>
+    <div>
+        <label for="newValue">New Value:</label>
+        <input type="number" id="newValue">
+        <button onclick="setData()">Set Data</button>
+    </div>
+    <div>
+        <button onclick="getData()">Get Data</button>
+        <p id="data"></p>
+    </div>
+    <div>
+        <button onclick="pay()">pay</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script>
+        const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+        const abi = [
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "id",
+				"type": "int256"
+			}
+		],
+		"name": "backMoney",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "id",
+				"type": "int256"
+			}
+		],
+		"name": "pay",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "send_all",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "to_send",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "int256",
+				"name": "id",
+				"type": "int256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "total",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "int256",
+				"name": "time",
+				"type": "int256"
+			}
+		],
+		"name": "ToPay",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "total",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "target",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "int256",
+				"name": "time",
+				"type": "int256"
+			}
+		],
+		"name": "ToSend",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "balance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "int256",
+				"name": "id",
+				"type": "int256"
+			}
+		],
+		"name": "trasaction",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "int256",
+						"name": "id",
+						"type": "int256"
+					},
+					{
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "total",
+						"type": "uint256"
+					},
+					{
+						"internalType": "int256",
+						"name": "time",
+						"type": "int256"
+					}
+				],
+				"internalType": "struct Shop.Payment",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+        const web3 = new Web3("http://localhost:8545");
+        const contract = new web3.eth.Contract(abi, contractAddress);
+
+        async function setData() {
+            const newValue = document.getElementById("newValue").value;
+            await contract.methods.setData(newValue).send({ from: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" });
+            console.log("Data set successfully!");
+        }
+
+        async function getData() {
+    const data = await contract.methods.balance().call();
+    console.log(data);
+    let text = "";
+    for (let i = 0; i < data.length; i++) {
+        text += data[i] + " ";
+    }
+    document.getElementById("data").innerText = `Current Data: ${text}`;
+}
+        async function pay() {
+            await contract.methods.pay(1).send({ from: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", value: 1000 });
+            console.log("Payed successfully!");
+        }
+    </script>
+</body>
+</html>
